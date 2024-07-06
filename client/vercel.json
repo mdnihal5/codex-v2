@@ -1,0 +1,6 @@
+{
+    "rewrites": [
+        { "source": "/api/:path*", "destination": "https://codex-v2-sp8j.onrender.com/api/:path" },
+        { "source": "/(.*)", "destination": "/" }
+    ]
+}
