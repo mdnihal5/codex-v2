@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { Resume, ResumeState } from "../../types";
-
 axios.defaults.withCredentials = true;
 // List all Resumes
 export const getResumes = createAsyncThunk("getresumes", async () => {
@@ -11,7 +10,6 @@ export const getResumes = createAsyncThunk("getresumes", async () => {
 // Delete Resume
 export const deleteResume = createAsyncThunk("deleteresume", async ({ _id, userId }: Resume) => {
 	const response = await axios.delete(`${import.meta.env.VITE_SERVER_URL}/api/resume/deletepost/${_id}/${userId}`, {
-		withCredentials: true,
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -21,7 +19,6 @@ export const deleteResume = createAsyncThunk("deleteresume", async ({ _id, userI
 // Add Resume
 export const addResume = createAsyncThunk("addresume", async (newPost: Resume) => {
 	const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/resume/create`, newPost, {
-		withCredentials: true,
 		headers: {
 			"Content-Type": "application/json",
 		},
