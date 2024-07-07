@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState, FC } from "react";
 import PropTypes from "prop-types";
-
 interface ThemeProviderProps {
     children: React.ReactNode;
     defaultTheme?: "dark" | "light" | "system";
