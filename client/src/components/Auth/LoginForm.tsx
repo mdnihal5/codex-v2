@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { toast } from "react-hot-toast";
 import { signIn } from "../../redux/slices/auth";
 import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../redux/store";
 import { useState } from "react";
 function LogInForm() {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const navigate = useNavigate();
@@ -13,7 +13,7 @@ function LogInForm() {
     const loginHandler = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            dispatch(signIn({ email, password }));
+            await dispatch(signIn({ email, password }));
             navigate("/");
         } catch (error) {}
     };

@@ -4,12 +4,12 @@ import authReducer from "./slices/auth";
 import resumeReducer from "./slices/resume";
 import messageReducer from "./slices/message";
 export const store = configureStore({
-	reducer: {
-		blogs: blogReducer,
-		user: authReducer,
-		resumes: resumeReducer,
-		messages: messageReducer,
-	},
+    reducer: {
+        blogs: blogReducer,
+        user: authReducer,
+        resumes: resumeReducer,
+        messages: messageReducer,
+    },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

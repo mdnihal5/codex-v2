@@ -1,14 +1,14 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../components/ui/dialog";
 import { Button } from "../components/ui/button";
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
 import { Plus } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { deletePost, addPost } from "../redux/slices/blog";
-
+import { deletePost as deletePostAction, addPost, getPosts } from "../redux/slices/blog";
+import { AppDispatch, RootState } from "../redux/store";
 const BlogCard: React.FC<{ blog: any; userId: any; onDelete: () => void }> = ({ blog, onDelete }) => {
     return (
         <div className="border border-gray-200 flex-col items-center gap-2 rounded-md shadow-md p-4">
@@ -26,6 +26,7 @@ const BlogCard: React.FC<{ blog: any; userId: any; onDelete: () => void }> = ({ 
         </div>
     );
 };
+
 const BlogSection: React.FC<{
     category: string;
     blogs: any;
@@ -41,33 +42,32 @@ const BlogSection: React.FC<{
 );
 
 const Resources: React.FC = () => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+    const dispatch = useDispatch<AppDispatch>();
     const [category, setCategory] = useState("");
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [link, setLink] = useState("");
-    const blogs = useSelector((state) => state.blogs.data);
-    const user = useSelector((state) => state.user.data);
+    const blogs = useSelector((state: RootState) => state.blogs.data);
+    const user = useSelector((state: RootState) => state.user.data);
 
-    const deletePost = (postIdToDelete: string, currentUser: string) => {
+    useEffect(() => {
+        dispatch(getPosts());
+    }, [dispatch]);
+
+    const deletePost = async (postIdToDelete: string, currentUser: string) => {
         try {
-            dispatch(deletePost({ _id: postIdToDelete, userId: currentUser }));
-            toast.success("Post deleted successfully");
+            await dispatch(deletePostAction({ _id: postIdToDelete, userId: currentUser })).unwrap();
         } catch (error) {
-            toast.error("Failed to delete post");
             console.error("Error deleting post: ", error);
         }
     };
 
-    const postHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    const postHandler = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            dispatch(addPost({ category, title, content, link }));
-            toast.success("Post added successfully");
+            await dispatch(addPost({ newPost: { category, title, content, link } }));
         } catch (error) {
             toast.error("Failed to add post");
-            console.error("Error adding post: ", error);
         }
     };
 

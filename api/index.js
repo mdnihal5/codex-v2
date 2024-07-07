@@ -11,23 +11,23 @@ import cors from "cors";
 dotenv.config();
 
 mongoose
-  .connect(process.env.MONGO)
-  .then(() => {
-    console.log("⛁ MongoDb is connected ✅");
-  })
-  .catch((err) => {
-    console.error(err);
-  });
+    .connect(process.env.MONGO)
+    .then(() => {
+        console.log("⛁ MongoDb is connected ✅");
+    })
+    .catch((err) => {
+        console.error(err);
+    });
 
 const app = express();
 
-const allowedOrigins = ["http://localhost:5173", "https://codex-mern.vercel.app"];
+const allowedOrigins = ["http://localhost:5173", "https://codex-v2-mern.vercel.app"];
 
 app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-  }),
+    cors({
+        origin: allowedOrigins,
+        credentials: true,
+    }),
 );
 
 app.use(express.json());
@@ -39,17 +39,17 @@ app.use("/api/resume", resumeRoutes); // create , getposts , deletepost/:postId/
 app.use("/api/chats", chatRoutes); // create . messages
 
 app.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || "Internal Server Error";
-  console.error(message);
-  res.status(statusCode).json({
-    success: false,
-    statusCode,
-    message,
-  });
+    const statusCode = err.statusCode || 500;
+    const message = err.message || "Internal Server Error";
+    console.error(message);
+    res.status(statusCode).json({
+        success: false,
+        statusCode,
+        message,
+    });
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT} 🥳`);
+    console.log(`🚀 Server is running on port ${PORT} 🥳`);
 });

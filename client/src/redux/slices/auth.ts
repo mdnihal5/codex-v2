@@ -3,12 +3,12 @@ import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { User, AuthState } from "../../types";
 import { toast } from "react-hot-toast";
 axios.defaults.withCredentials = true;
-export const signIn = createAsyncThunk("signIn", async (user: User) => {
+export const signIn = createAsyncThunk("signIn", async (user: any) => {
 	const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/auth/signin`, user);
 	return response.data;
 });
 
-export const signUp = createAsyncThunk("signUp", async (user: User) => {
+export const signUp = createAsyncThunk("signUp", async (user: any) => {
 	const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/auth/signup`, user);
 	return response.data;
 });
@@ -34,7 +34,7 @@ const authSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		// SignIn
-		builder.addCase(signIn.fulfilled, (state, action: PayloadAction<User>) => {
+		builder.addCase(signIn.fulfilled, (state, action: PayloadAction<{ user: User; token: string }>) => {
 			state.isLoading = false;
 			state.data = action.payload.user;
 			document.cookie = `access_token=${action.payload.token}; path=/; expires=${new Date(Date.now() + 30 * 86400000).toUTCString()}; secure; sameSite=strict`;

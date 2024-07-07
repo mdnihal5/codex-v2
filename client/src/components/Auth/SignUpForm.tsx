@@ -1,18 +1,21 @@
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { toast } from "react-hot-toast";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { signUp } from "../../redux/slices/auth";
+import { AppDispatch } from "../../redux/store";
 
 function SignUpForm() {
+    const dispatch = useDispatch<AppDispatch>();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [username, setUsername] = useState<string>("");
     const navigate = useNavigate();
 
     const registerHandler = async (e: React.FormEvent<HTMLFormElement>) => {
-        dispatch(signUp({ username, email, password }));
+        e.preventDefault();
+        await dispatch(signUp({ username, email, password }));
+        navigate("/");
     };
 
     const inputClasses =

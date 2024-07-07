@@ -1,17 +1,15 @@
-import { FC, useState, useContext, MouseEvent } from "react";
+import { FC, useState, MouseEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { Code } from "lucide-react";
 import { AvatarImage, AvatarFallback, Avatar } from "../ui/avatar";
 import { DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent, DropdownMenu } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { SheetTrigger, SheetContent, Sheet } from "../ui/sheet";
 import ThemeToggle from "../../utils/ThemeToggle";
-import { toast } from "react-hot-toast";
 import { Link as LucidLink, X, CircleArrowOutUpRight, FileSearch2, MessagesSquare } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { signOut } from "../../redux/slices/auth";
-
+import { RootState, AppDispatch } from "../../redux/store";
 interface NavLinkProps {
 	to: string;
 	text: string;
@@ -57,11 +55,12 @@ const Navbar: FC = () => {
 	const [showMobileNav, setShowMobileNav] = useState<boolean>(false);
 
 	const navigate = useNavigate();
-	const user = useSelector((state) => state.user.data) || null;
-	const dispatch = useDispatch();
-
+	const user = useSelector((state: RootState) => state.user.data) || null;
+	const dispatch = useDispatch<AppDispatch>();
 	const handleLogout = async () => {
-		dispatch(signOut());
+		try {
+			await dispatch(signOut());
+		} catch (error) {}
 	};
 
 	const handleLogin = () => {

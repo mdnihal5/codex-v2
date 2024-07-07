@@ -1,28 +1,26 @@
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { BlogState, Post } from "../../types";
 import { toast } from "react-hot-toast";
-
+import { Post, AddPostPayload } from "../../types";
 axios.defaults.withCredentials = true;
 
 // Fetch posts
-export const getPosts = createAsyncThunk("getPosts", async () => {
+export const getPosts = createAsyncThunk<Post[]>("getPosts", async () => {
 	const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/blog/getposts`);
 	return response.data.posts;
 });
 
 // Delete post
-export const deletePost = createAsyncThunk("deletepost", async ({ _id, userId }: Post) => {
-	const response = await axios.delete(`${import.meta.env.VITE_SERVER_URL}/api/blog/deletepost/${_id}/${userId}`, {
+export const deletePost = createAsyncThunk<void, { _id: string; userId: string }>("deletepost", async ({ _id, userId }) => {
+	await axios.delete(`${import.meta.env.VITE_SERVER_URL}/api/blog/deletepost/${_id}/${userId}`, {
 		headers: {
 			"Content-Type": "application/json",
 		},
 	});
-	return { _id };
 });
 
 // Add post
-export const addPost = createAsyncThunk("addpost", async (newPost) => {
+export const addPost = createAsyncThunk<Post, { newPost: AddPostPayload }>("addpost", async ({ newPost }) => {
 	const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/blog/create`, newPost, {
 		headers: {
 			"Content-Type": "application/json",
@@ -31,9 +29,15 @@ export const addPost = createAsyncThunk("addpost", async (newPost) => {
 	return response.data;
 });
 
+interface BlogState {
+	data: Post[];
+	isLoading: boolean;
+	isError: boolean | null;
+}
+
 const initialState: BlogState = {
-	isLoading: false,
 	data: [],
+	isLoading: false,
 	isError: false,
 };
 
@@ -43,7 +47,7 @@ const blogSlice = createSlice({
 	reducers: {},
 	extraReducers: (builder) => {
 		// Get posts
-		builder.addCase(getPosts.fulfilled, (state, action: PayloadAction<Post[]>) => {
+		builder.addCase(getPosts.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.data = action.payload;
 		});
@@ -59,7 +63,7 @@ const blogSlice = createSlice({
 		builder.addCase(addPost.pending, (state) => {
 			state.isLoading = true;
 		});
-		builder.addCase(addPost.fulfilled, (state, action: PayloadAction<Post>) => {
+		builder.addCase(addPost.fulfilled, (state, action) => {
 			state.isLoading = false;
 			toast.success("Post added successfully");
 			state.data.push(action.payload);
@@ -74,10 +78,11 @@ const blogSlice = createSlice({
 		builder.addCase(deletePost.pending, (state) => {
 			state.isLoading = true;
 		});
-		builder.addCase(deletePost.fulfilled, (state, action: PayloadAction<{ _id: string }>) => {
-			toast.success("Post deleted successfully");
+		builder.addCase(deletePost.fulfilled, (state, action) => {
 			state.isLoading = false;
-			state.data = state.data.filter((post) => post._id !== action.payload._id);
+			const deletedPostId = action.meta.arg._id; // Assuming action.meta.arg contains the arguments passed to the thunk
+			state.data = state.data.filter((post) => post._id !== deletedPostId);
+			toast.success("Post deleted successfully");
 		});
 		builder.addCase(deletePost.rejected, (state) => {
 			toast.error("Couldn't delete post");
