@@ -72,13 +72,14 @@ const Resources: React.FC = () => {
     };
 
     const categories = Array.from(new Set(blogs?.map((blog: any) => blog?.category)) || []);
-
-    return categories.length ? (
-        <div className="flex items-center justify-center m-5">
-            <div className="w-full max-w-6xl mx-auto px-4 md:px-6 py-12 md:py-20 lg:py-24">
-                {categories.map((category) => (
-                    <BlogSection key={category} category={category} blogs={blogs.filter((blog: any) => blog?.category === category)} userId={user?._id} deletePost={deletePost} />
-                ))}
+    return (
+        <>
+            <div className="flex items-center justify-center m-5">
+                <div className="w-full max-w-6xl mx-auto px-4 md:px-6 py-12 md:py-20 lg:py-24">
+                    {categories.map((category) => (
+                        <BlogSection key={category} category={category} blogs={blogs.filter((blog: any) => blog?.category === category)} userId={user?._id} deletePost={deletePost} />
+                    ))}
+                </div>
             </div>
             <div className="fixed bottom-4 right-4">
                 <Dialog>
@@ -127,9 +128,7 @@ const Resources: React.FC = () => {
                     </DialogContent>
                 </Dialog>
             </div>
-        </div>
-    ) : (
-        <h1>Loading...</h1>
+        </>
     );
 };
 
